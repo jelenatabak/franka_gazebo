@@ -50,6 +50,33 @@
 	<gazebo reference="${ns}_leftfinger"/>
 	<gazebo reference="${ns}_rightfinger"/>
 
+	<gazebo reference="${ns}_ft_leftfinger"/>
+	<gazebo reference="${ns}_ft_rightfinger"/>
+
+	<gazebo reference="${ns}_ft_joint_1">
+    	<provideFeedback>true</provideFeedback>
+	</gazebo>
+
+	<gazebo>
+		<plugin name="ft_left_sensor" filename="libgazebo_ros_ft_sensor.so">
+		    <updateRate>100.0</updateRate>
+		    <topicName>/ft_left_sensor</topicName>
+		    <jointName>${ns}_ft_joint_1</jointName>
+		</plugin>
+	</gazebo>
+
+	<gazebo reference="${ns}_ft_joint_2">
+    	<provideFeedback>true</provideFeedback>
+	</gazebo>
+
+	<gazebo>
+		<plugin name="ft_right_sensor" filename="libgazebo_ros_ft_sensor.so">
+		    <updateRate>100.0</updateRate>
+		    <topicName>/ft_right_sensor</topicName>
+		    <jointName>${ns}_ft_joint_2</jointName>
+		</plugin>
+	</gazebo>
+
 	<transmission name="${ns}_finger_joint1_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="${ns}_finger_joint1">

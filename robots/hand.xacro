@@ -3,6 +3,7 @@
   <xacro:macro name="hand" params="connected_to:='' ns:='' rpy:='0 0 0' xyz:='0 0 0' ">
 	
 	<xacro:property name="camera_link" value="0.03" /> <!-- Size of square 'camera' box -->
+	<xacro:property name="ft_link" value="0.01" /> <!-- Size of square 'force_torque' box -->
 
     <xacro:unless value="${connected_to == ''}">
       <joint name="${ns}_hand_joint" type="fixed">
@@ -41,47 +42,47 @@
       </collision>
     </link>
 
-	<!-- Camera -->
-	<link name="${ns}_camera_link">
-	  <collision>
-	    <origin xyz="0 0 0" rpy="0 0 0"/>
-	    <geometry>
-	  <box size="${camera_link} ${camera_link} ${camera_link}"/>
-	    </geometry>
-	  </collision>
+		<!-- Camera -->
+		<link name="${ns}_camera_link">
+			<collision>
+			  <origin xyz="0 0 0" rpy="0 0 0"/>
+			  <geometry>
+			<box size="${camera_link} ${camera_link} ${camera_link}"/>
+			  </geometry>
+			</collision>
 
-	  <visual>
-	    <origin xyz="0 0 0" rpy="0 0 0"/>
-	    <geometry>
-	  <box size="${camera_link} ${camera_link} ${camera_link}"/>
-	    </geometry>
-	  </visual>
+			<visual>
+			  <origin xyz="0 0 0" rpy="0 0 0"/>
+			  <geometry>
+			<box size="${camera_link} ${camera_link} ${camera_link}"/>
+			  </geometry>
+			</visual>
 
-	  <inertial>
-	    <mass value="1e-5" />
-	    <origin xyz="0 0 0" rpy="0 0 0"/>
-	    <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
-	  </inertial>
-	</link>
+			<inertial>
+			  <mass value="1e-5" />
+			  <origin xyz="0 0 0" rpy="0 0 0"/>
+			  <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+			</inertial>
+		</link>
 
-	<joint name="${ns}_camera_joint" type="fixed">
-	  <axis xyz="0 0 0" />
-	  <origin xyz="0.04 0 0.05" rpy="${pi} ${-pi/2} 0"/>
-	  <parent link="${ns}_hand"/>
-	  <child link="${ns}_camera_link"/>
-	</joint>
+		<joint name="${ns}_camera_joint" type="fixed">
+			<axis xyz="0 0 0" />
+			<origin xyz="0.04 0 0.05" rpy="${pi} ${-pi/2} 0"/>
+			<parent link="${ns}_hand"/>
+			<child link="${ns}_camera_link"/>
+		</joint>
 
-	<joint name="camera_optical_joint" type="fixed">
-	  <!-- these values have to be these values otherwise the gazebo camera
-	      image won't be aligned properly with the frame it is supposedly
-	      originating from -->
-	  <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
-	  <parent link="${ns}_camera_link"/>
-	  <child link="${ns}_camera_link_optical"/>
-	</joint>
+		<joint name="camera_optical_joint" type="fixed">
+			<!-- these values have to be these values otherwise the gazebo camera
+			    image won't be aligned properly with the frame it is supposedly
+			    originating from -->
+			<origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+			<parent link="${ns}_camera_link"/>
+			<child link="${ns}_camera_link_optical"/>
+		</joint>
 
-	<link name="${ns}_camera_link_optical">
-	</link>
+		<link name="${ns}_camera_link_optical">
+		</link>
 
     <link name="${ns}_leftfinger">
       <inertial>
@@ -143,6 +144,64 @@
       <origin xyz="0 0 0.0584" rpy="0 0 0"/>
       <axis xyz="0 -1 0"/>
       <limit effort="20" lower="-0.001" upper="0.04" velocity="0.3"/>
+    </joint>
+
+		<link name="${ns}_ft_leftfinger">
+			<collision>
+			  <origin xyz="0 0 0" rpy="0 0 0"/>
+			  <geometry>
+			<box size="${ft_link} ${ft_link} ${ft_link}"/>
+			  </geometry>
+			</collision>
+
+			<visual>
+			  <origin xyz="0 0 0" rpy="0 0 0"/>
+			  <geometry>
+			<box size="${ft_link} ${ft_link} ${ft_link}"/>
+			  </geometry>
+			</visual>
+
+			<inertial>
+			  <mass value="1e-5" />
+			  <origin xyz="0 0 0" rpy="0 0 0"/>
+			  <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+			</inertial>
+		</link>
+
+		<link name="${ns}_ft_rightfinger">
+			<collision>
+			  <origin xyz="0 0 0" rpy="0 0 0"/>
+			  <geometry>
+			<box size="${ft_link} ${ft_link} ${ft_link}"/>
+			  </geometry>
+			</collision>
+
+			<visual>
+			  <origin xyz="0 0 0" rpy="0 0 0"/>
+			  <geometry>
+			<box size="${ft_link} ${ft_link} ${ft_link}"/>
+			  </geometry>
+			</visual>
+
+			<inertial>
+			  <mass value="1e-5" />
+			  <origin xyz="0 0 0" rpy="0 0 0"/>
+			  <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+			</inertial>
+		</link>
+
+		<joint name="${ns}_ft_joint_1" type="revolute">
+		    <parent link="${ns}_leftfinger"/>
+		    <child link="${ns}_ft_leftfinger"/>
+		    <origin xyz="0 -0.005 0.06" rpy="0 0 0"/>
+				<limit velocity="6.5" effort="1000" lower="0" upper="0" />
+		  </joint>
+
+    <joint name="${ns}_ft_joint_2" type="revolute">
+      <parent link="${ns}_rightfinger"/>
+      <child link="${ns}_ft_rightfinger"/>
+      <origin xyz="0 0.005 0.06" rpy="0 0 ${pi}"/>
+			<limit velocity="6.5" effort="1000" lower="0" upper="0" />
     </joint>
 
   </xacro:macro>
