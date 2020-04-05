@@ -35,6 +35,3 @@ Two launch files are provided in this package, one for just the arm and the othe
 They spawn the robot model in Gazebo and start the controllers.
 
 Launch file `panda_arm_hand.launch` includes an example controller that sends sinusoidal position commands to each joint.
-Make sure that Gazebo is already running by launching your desired world, for example:
-
-`roslaunch gazebo_ros empty_world.launch`.
